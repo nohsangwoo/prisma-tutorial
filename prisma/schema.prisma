@@ -11,27 +11,27 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
-  age            Int
-  name           String?
-  email          String          @unique
-  role           Role            @default(BASIC) // Enum을 타입으로 받아 지정할 수도 있다.
-  isAdmin        Boolean
-  preferences    Json
+  id               String          @id @default(uuid())
+  age              Int
+  name             String?
+  email            String          @unique
+  role             Role            @default(BASIC) // Enum을 타입으로 받아 지정할 수도 있다.
+  isAdmin          Boolean
+  // preferences    Json
   // blob        Unsupported("") // prisma가 지원하지 않는 타입을 사용하고싶을때
-  writtenPosts   Post[]          @relation("WrittenPosts")
-  favoritePosts  Post[]          @relation("FavoritePosts")
-  UserPreference UserPreference?
+  writtenPosts     Post[]          @relation("WrittenPosts")
+  favoritePosts    Post[]          @relation("FavoritePosts")
+  userPreference   UserPreference? @relation(fields: [userPreferenceId], references: [id])
+  userPreferenceId String?         @unique
 
-  @@unique([age, name]) // 이렇게 한번에 속성을 정의해줄 수도 있다.
+  @@unique([age, name]) // 이렇게 한번에 속성을 정의해줄 수도 있다. (검색시 age_name으로 조건을 지정할 수 있다.)
   @@index([email]) // db에서 검색속도 높이려고하는 indexing과 개념이 똑같다. 배열안에 들어가 있는내용이 인덱싱을 하는 기준.
 }
 
 model UserPreference {
   id           String  @id @default(uuid())
   emailUpdates Boolean
-  user         User    @relation(fields: [userId], references: [id])
-  userId       String  @unique
+  user         User?
 }
 
 model Post {
